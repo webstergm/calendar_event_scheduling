@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: webster
+      POSTGRES_PASSWORD: gabriel
+      POSTGRES_DB: websterdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - app_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: my_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: webster@example.com
+      PGADMIN_DEFAULT_PASSWORD: gabriel
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "15432:80"
+    depends_on:
+      - postgres
+    networks:
+      - app_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: my_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: webster
+      RABBITMQ_DEFAULT_PASS: gabriel
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions \"/etc/rabbitmq/definitions.json\""
+    ports:
+      - "5672:5672"     # main RabbitMQ port for app connections
+      - "15672:15672"   # management UI
+    volumes:
+      - ./init-rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  rabbitmq_data:
+
+networks:
+  app_network:

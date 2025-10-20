@@ -1,0 +1,52 @@
+{
+  "vhosts": [
+    { "name": "/" }
+  ],
+  "users": [
+    {
+      "name": "webster",
+      "password": "gabriel",
+      "tags": "administrator"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "webster",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "calendar_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "calendar_events",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "calendar_exchange",
+      "vhost": "/",
+      "destination": "calendar_events",
+      "destination_type": "queue",
+      "routing_key": "calendar_events",
+      "arguments": {}
+    }
+  ]
+}
+
